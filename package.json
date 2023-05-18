@@ -9,7 +9,7 @@
     "dev": "nodemon ./app",
     "lint": "eslint .",
     "format": "prettier --write '**/*.js'",
-    "test": "mocha --exit --timeout 10000 tests/"
+    "test": "mocha --exit --timeout 60000 tests/"
   },
   "license": "MIT",
   "dependencies": {

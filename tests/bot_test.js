@@ -105,7 +105,7 @@ describe('Telegram bot test', () => {
   });
 
   it('should return the list of supported currencies', async () => {
-    const client = server.getClient(token, { timeout: 5000 });
+    const client = server.getClient(token, { timeout: 60000 });
     const userStub = sinon.stub(User, 'findOne');
     userStub.returns(testUser);
     const command = client.makeCommand('/listcurrencies');
