@@ -12,7 +12,6 @@ const testOrder = require('./order');
 const { getCurrenciesWithPrice } = require('../util');
 
 describe('Telegram bot test', () => {
-  this.timeout(10000); 
   const serverConfig = { port: 9001 };
   const token = '123456';
   let server;
