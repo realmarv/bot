@@ -5,7 +5,6 @@ WORKDIR /usr/src/app
 
 # Update
 RUN apt update
-RUN apt upgrade -y
 
 # Install App dependencies
 COPY package*.json ./
