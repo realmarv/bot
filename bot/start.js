@@ -8,7 +8,6 @@ const {
   PendingPayment,
   Community,
   Dispute,
-  Config,
 } = require('../models');
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const {
@@ -162,38 +161,6 @@ const initialize = (botToken, options) => {
 
       messages.startMessage(ctx);
       await validateUser(ctx, true);
-    } catch (error) {
-      logger.error(error);
-    }
-  });
-
-  bot.command('maintenance', superAdminMiddleware, async ctx => {
-    try {
-      const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
-      if (!val) return;
-      let config = await Config.findOne();
-      if (!config) {
-        config = new Config();
-      }
-      config.maintenance = false;
-      if (val == 'on') {
-        config.maintenance = true;
-      }
-      await config.save();
-      await ctx.reply(ctx.i18n.t('operation_successful'));
-    } catch (error) {
-      logger.error(error);
-    }
-  });
-
-  bot.on('text', userMiddleware, async (ctx, next) => {
-    try {
-      const config = await Config.findOne({ maintenance: true });
-      if (config) {
-        await ctx.reply(ctx.i18n.t('maintenance'));
-      } else {
-        next();
-      }
     } catch (error) {
       logger.error(error);
     }
