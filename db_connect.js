@@ -12,6 +12,7 @@ if (!MONGO_URI) {
 }
 
 const connect = () => {
+  console.log("here30: " + MONGO_URI)
   mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
