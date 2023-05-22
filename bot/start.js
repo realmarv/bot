@@ -2,6 +2,47 @@ const { Telegraf, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const { limit } = require('@grammyjs/ratelimiter');
 const schedule = require('node-schedule');
+
+//
+require('dotenv').config();
+const { SocksProxyAgent } = require('socks-proxy-agent');
+// const { start } = require('../bot');
+const mongoConnect = require('../db_connect');
+const { resubscribeInvoices } = require('../ln');
+// const logger = require('../logger');
+const { delay } = require('../util');
+// console.log("SOCKS_PROXY_HOST:" + process.env.SOCKS_PROXY_HOST)
+(async () => {
+  process.on('unhandledRejection', e => {
+    logger.error(`Unhandled Rejection: ${e.message}`);
+  });
+
+  process.on('uncaughtException', e => {
+    logger.error(`Uncaught Exception: ${e.message}`);
+  });
+
+  const mongoose = mongoConnect();
+  mongoose.connection
+    .once('open', async () => {
+      logger.info('Connected to Mongo instance.');
+      let options = { handlerTimeout: 60000 };
+      
+      if (process.env.SOCKS_PROXY_HOST) {
+        const agent = new SocksProxyAgent(process.env.SOCKS_PROXY_HOST);
+        options = {
+          telegram: {
+            agent,
+          },
+        };
+      }
+      const bot = start(process.env.BOT_TOKEN, options);
+      // Wait 1 seconds before try to resubscribe hold invoices
+      await delay(1000);
+      await resubscribeInvoices(bot);
+    })
+    .on('error', error => logger.error(`Error connecting to Mongo: ${error}`));
+})();
+//
 const {
   Order,
   User,
@@ -10,6 +51,7 @@ const {
   Dispute,
   Config,
 } = require('../models');
+console.log("here4")
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const {
   commandArgsMiddleware,
@@ -110,6 +152,46 @@ const askForConfirmation = async (user, command) => {
 };
 
 const initialize = (botToken, options) => {
+  //
+  // require('dotenv').config();
+  // const { SocksProxyAgent } = require('socks-proxy-agent');
+  // // const { start } = require('../bot');
+  // const mongoConnect = require('../db_connect');
+  // const { resubscribeInvoices } = require('../ln');
+  // // const logger = require('../logger');
+  // const { delay } = require('../util');
+  // // console.log("SOCKS_PROXY_HOST:" + process.env.SOCKS_PROXY_HOST)
+  // (async () => {
+  //   process.on('unhandledRejection', e => {
+  //     logger.error(`Unhandled Rejection: ${e.message}`);
+  //   });
+  
+  //   process.on('uncaughtException', e => {
+  //     logger.error(`Uncaught Exception: ${e.message}`);
+  //   });
+  
+  //   const mongoose = mongoConnect();
+  //   mongoose.connection
+  //     .once('open', async () => {
+  //       logger.info('Connected to Mongo instance.');
+  //       let options = { handlerTimeout: 60000 };
+        
+  //       if (process.env.SOCKS_PROXY_HOST) {
+  //         const agent = new SocksProxyAgent(process.env.SOCKS_PROXY_HOST);
+  //         options = {
+  //           telegram: {
+  //             agent,
+  //           },
+  //         };
+  //       }
+  //       const bot = start(process.env.BOT_TOKEN, options);
+  //       // Wait 1 seconds before try to resubscribe hold invoices
+  //       await delay(1000);
+  //       await resubscribeInvoices(bot);
+  //     })
+  //     .on('error', error => logger.error(`Error connecting to Mongo: ${error}`));
+  // })();
+  //
   const i18n = new I18n({
     defaultLanguageOnMissing: true, // implies allowMissing = true
     directory: 'locales',
@@ -168,6 +250,7 @@ const initialize = (botToken, options) => {
   });
 
   bot.command('maintenance', superAdminMiddleware, async ctx => {
+    console.log("here5")
     try {
       const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
       if (!val) return;
@@ -184,19 +267,31 @@ const initialize = (botToken, options) => {
     } catch (error) {
       logger.error(error);
     }
+    console.log("here6")
   });
 
   bot.on('text', userMiddleware, async (ctx, next) => {
+    console.log("here7")
     try {
+      console.log("here8")
       const config = await Config.findOne({ maintenance: true });
+      console.log("here9")
       if (config) {
+        console.log("here10")
         await ctx.reply(ctx.i18n.t('maintenance'));
+        console.log("here11")
       } else {
+        console.log("here12")
         next();
+        console.log("here13")
       }
+      console.log("here14")
     } catch (error) {
+      console.log("here15")
       logger.error(error);
+      console.log("here16")
     }
+    console.log("here17")
   });
 
   bot.command('version', async ctx => {

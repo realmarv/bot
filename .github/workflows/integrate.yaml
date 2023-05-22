@@ -4,11 +4,55 @@ on: [push, pull_request]
 
 jobs:
   ci_to_main:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    container:
+      image: "ubuntu:20.04"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
+
+      - name: Update apt and install required packages
+        run: |
+          apt update
+          apt install --yes sudo
+          sudo apt install --yes --no-install-recommends curl
+          sudo apt-get install --yes mongodb
+      - run: sudo apt-get install --yes gnupg
+      - name: Import the public key used by the package management system
+        run: |
+          sudo rm -f /etc/ssl/certs/ca-bundle.crt
+          sudo apt reinstall --yes ca-certificates
+          sudo update-ca-certificates
+          curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
+            sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg \
+            --dearmor
+      - name: Create a list file for MongoDB
+        run: echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+      - name: Reload local package database
+        run: sudo apt-get update
+
+      - name: Install the MongoDB packages
+        run: sudo apt-get install --yes mongodb-org
+      
+      - name: Pin the package at the currently installed version
+        run: |
+          sudo echo "mongodb-org hold" | sudo dpkg --set-selections
+          sudo echo "mongodb-org-database hold" | sudo dpkg --set-selections
+          sudo echo "mongodb-org-server hold" | sudo dpkg --set-selections
+          sudo echo "mongodb-mongosh hold" | sudo dpkg --set-selections
+          sudo echo "mongodb-org-mongos hold" | sudo dpkg --set-selections
+          sudo echo "mongodb-org-tools hold" | sudo dpkg --set-selections
+
+      - name: Init System
+        run: ps --no-headers -o comm 1
+
+      - name: Start MongoDB
+        run: sudo service mongod start
+
+      - name: Verify that MongoDB has started successfully
+        run: sudo service mongod status
+
       - run: npm ci
       - run: npm test
