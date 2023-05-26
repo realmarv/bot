@@ -18,8 +18,8 @@ jobs:
           apt update
           apt install --yes sudo
           sudo apt install --yes --no-install-recommends curl
-          sudo apt-get install --yes mongodb
-      - run: sudo apt-get install --yes gnupg
+          sudo apt-get install --yes gnupg
+          sudo apt install --yes mongodb
       - name: Import the public key used by the package management system
         run: |
           sudo rm -f /etc/ssl/certs/ca-bundle.crt
