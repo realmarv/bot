@@ -33,8 +33,8 @@ jobs:
       - name: Reload local package database
         run: sudo apt-get update
 
-      - name: Install the MongoDB packages
-        run: sudo apt-get install --yes mongodb-org
+      # - name: Install the MongoDB packages
+      #   run: sudo apt-get install --yes mongodb-org
       
       - name: Pin the package at the currently installed version
         run: |
