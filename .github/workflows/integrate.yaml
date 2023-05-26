@@ -33,10 +33,10 @@ jobs:
       - run: sudo apt-get install -y mongodb-org 
 
       - name: Start MongoDB
-        run: sudo service mongodb start
+        run: sudo service mongod start
 
       - name: Verify that MongoDB has started successfully
-        run: echo $(sudo service mongodb status)
+        run: echo $(sudo service mongod status)
 
       - run: npm ci
       - name: Run tests
