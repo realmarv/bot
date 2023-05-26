@@ -40,7 +40,15 @@ jobs:
         run: sudo service mongodb start
 
       - name: Verify that MongoDB has started successfully
-        run: sudo service mongodb status
+        run: echo $(sudo service mongodb status)
 
       - run: npm ci
-      - run: npm test
+      - name: Run tests
+        env:
+          DB_USER: 'mongoadmin'
+          DB_PASS: 'secret'
+          DB_HOST: 'localhost'
+          DB_PORT: '27017'
+          DB_NAME: 'mongodb-mongodb-1'
+        run: |
+          npm test
