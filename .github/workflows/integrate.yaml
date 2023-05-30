@@ -32,10 +32,8 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install -y mongodb-org
 
-      - run: sudo systemctl status mongod
-
       - name: Start MongoDB
-        run: sudo service mongod start
+        run: sudo service mongod start || sudo /etc/init.d/mongod start
 
       - name: Verify that MongoDB has started successfully
         run: sudo service mongod status
