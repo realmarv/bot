@@ -36,6 +36,11 @@ jobs:
       - run: sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
       - run: sudo apt-get install -y mongodb-org
       - run: mongod --version
+
+      - run: mkdir /data/db
+      - run: mkdir /data/db/log
+      - run: mongod --dbpath data/db --fork --logpath data/db/log
+
       - run: sudo service mongod start
       - name: Verify that MongoDB has started successfully
         run: sudo service mongod status
