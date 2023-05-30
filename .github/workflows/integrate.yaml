@@ -34,7 +34,7 @@ jobs:
       - run: mongod --version
       - run: mkdir -p /data/db 
       - run: mkdir -p /data/db/log
-      - run: mongod --dbpath /data/db --fork --logpath /data/db/log
+      # - run: mongod --dbpath /data/db --fork --logpath /data/db/log
       - name: Start MongoDB
         run: mongod
 
