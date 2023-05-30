@@ -36,9 +36,9 @@ jobs:
       - run: sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
       - run: sudo apt-get install -y mongodb-org
       - run: mongod --version
-      - run: sudo service mongodb start
+      - run: sudo service mongod start
       - name: Verify that MongoDB has started successfully
-        run: sudo service mongodb status
+        run: sudo service mongod status
 
       - name: Create database
         run: mongo --eval 'db.getSiblingDB("lnp2pbot").createCollection("mycollection")'
