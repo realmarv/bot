@@ -5,6 +5,8 @@ on: [push, pull_request]
 jobs:
   ci_to_main:
     runs-on: ubuntu-20.04
+    container:
+      image: "ubuntu:20.04"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -30,7 +32,9 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install --yes mongodb
       - run: mongod --version
-
+      - run: mkdir /data/db 
+      - run: mkdir /data/db/log
+      - run: mongod --dbpath data/db --fork --logpath data/db/log
       - name: Start MongoDB
         run: mongod
 
