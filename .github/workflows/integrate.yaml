@@ -38,13 +38,16 @@ jobs:
       - name: Verify that MongoDB has started successfully
         run: echo $(sudo service mongod status)
 
+      - name: Create database
+        run: mongo --eval 'db.getSiblingDB("lnp2pbot").createCollection("mycollection")'
+
       - run: npm ci
       - name: Run tests
         env:
-          DB_USER: 'mongoadmin'
-          DB_PASS: 'secret'
+          DB_USER: ''
+          DB_PASS: ''
           DB_HOST: 'localhost'
           DB_PORT: '27017'
-          DB_NAME: 'mongodb-mongodb-1'
+          DB_NAME: 'lnp2pbot'
         run: |
           npm test
