@@ -32,6 +32,12 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install -y mongodb-org
       - run: mongod --version
+
+      - run: mkdir /data/db
+      - run: mkdir /data/db/log
+      - run: mongod --dbpath data/db --fork --logpath data/db/log
+      - run: mongod --version
+      
       - name: Start MongoDB
         run: sudo service mongod start || sudo /etc/init.d/mongod start
 
