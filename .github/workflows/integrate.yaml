@@ -4,9 +4,7 @@ on: [push, pull_request]
 
 jobs:
   ci_to_main:
-    runs-on: ubuntu-latest
-    container:
-      image: "ubuntu:latest"
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -14,8 +12,8 @@ jobs:
           node-version: 14.x
       - name: Update apt and install required packages
         run: |
-          apt update
           apt install --yes sudo
+          sudo apt update
           sudo apt install --yes --no-install-recommends curl
           sudo apt-get install --yes gnupg
 
