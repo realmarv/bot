@@ -12,7 +12,6 @@ jobs:
           node-version: 14.x
       - name: Update apt and install required packages
         run: |
-          apt install --yes sudo
           sudo apt update
           sudo apt install --yes --no-install-recommends curl
           sudo apt-get install --yes gnupg
