@@ -78,7 +78,11 @@ exports.attemptPendingPayments = async bot => {
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
+        if (
+          process.env.PAYMENT_ATTEMPTS !== undefined &&
+          pending.attempts ===
+            parseInt(process.env.PAYMENT_ATTEMPTS?.toString())
+        ) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
             bot,
@@ -159,7 +163,10 @@ exports.attemptCommunitiesPendingPayments = async bot => {
           })
         );
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
+        if (
+          process.env.PAYMENT_ATTEMPTS !== undefined &&
+          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS.toString())
+        ) {
           await bot.telegram.sendMessage(
             user.tg_id,
             i18nCtx.t('pending_payment_failed', {
