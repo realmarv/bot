@@ -33,9 +33,7 @@ jobs:
       - name: Check Mongo version
         run: mongod --version
       - name: Start MongoDB
-        run: |
-          # we use mongodb service instead of mongod as a result of following the github issues mentioned before
-          sudo service mongod start
+        run: sudo service mongod start
       - name: Verify that MongoDB has started successfully
         run: sudo service mongod status
 
