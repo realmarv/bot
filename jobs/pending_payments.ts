@@ -3,11 +3,13 @@ const { PendingPayment, Order, User, Community } = require('../models');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
 const logger = require('../logger');
+const telegraf = require('telegraf');
+// import { Telegraf } from 'telegraf';
 
-exports.attemptPendingPayments = async bot => {
+export const attemptPendingPayments = async (bot: Telegraf) => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+    attempts: { $lt: parseInt(process.env.PAYMENT_ATTEMPTS as string) },
     is_invoice_expired: false,
     community_id: null,
   });
@@ -78,7 +80,7 @@ exports.attemptPendingPayments = async bot => {
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
+        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS as string)) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
             bot,
@@ -105,10 +107,10 @@ exports.attemptPendingPayments = async bot => {
   }
 };
 
-exports.attemptCommunitiesPendingPayments = async bot => {
+export const attemptCommunitiesPendingPayments = async (bot: Telegraf) => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+    attempts: { $lt: parseInt(process.env.PAYMENT_ATTEMPTS as string) },
     is_invoice_expired: false,
     community_id: { $ne: null },
   });
@@ -159,7 +161,7 @@ exports.attemptCommunitiesPendingPayments = async bot => {
           })
         );
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
+        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS as string)) {
           await bot.telegram.sendMessage(
             user.tg_id,
             i18nCtx.t('pending_payment_failed', {

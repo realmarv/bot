@@ -1,7 +1,7 @@
 const {
   attemptPendingPayments,
   attemptCommunitiesPendingPayments,
-} = require('./pending_payments');
+} = require('./pending_payments.ts');
 const cancelOrders = require('./cancel_orders');
 const deleteOrders = require('./delete_published_orders');
 const calculateEarnings = require('./calculate_community_earnings');
