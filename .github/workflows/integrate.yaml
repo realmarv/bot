@@ -46,9 +46,9 @@ jobs:
       - name: Start MongoDB
         run: |
           # we use mongodb service instead of mongod as a result of following the github issues mentioned before
-          sudo service mongodb start
+          sudo service mongod start
       - name: Verify that MongoDB has started successfully
-        run: sudo service mongodb status
+        run: sudo service mongod status
 
       - name: Create database
         run: |
