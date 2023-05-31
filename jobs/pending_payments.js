@@ -3,13 +3,11 @@ const { PendingPayment, Order, User, Community } = require('../models');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
 const logger = require('../logger');
-const telegraf = require('telegraf');
-// import { Telegraf } from 'telegraf';
 
-export const attemptPendingPayments = async (bot: Telegraf) => {
+exports.attemptPendingPayments = async bot => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: parseInt(process.env.PAYMENT_ATTEMPTS as string) },
+    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
     is_invoice_expired: false,
     community_id: null,
   });
@@ -80,7 +78,7 @@ export const attemptPendingPayments = async (bot: Telegraf) => {
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS as string)) {
+        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
             bot,
@@ -107,10 +105,10 @@ export const attemptPendingPayments = async (bot: Telegraf) => {
   }
 };
 
-export const attemptCommunitiesPendingPayments = async (bot: Telegraf) => {
+exports.attemptCommunitiesPendingPayments = async bot => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: parseInt(process.env.PAYMENT_ATTEMPTS as string) },
+    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
     is_invoice_expired: false,
     community_id: { $ne: null },
   });
@@ -161,7 +159,7 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf) => {
           })
         );
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS as string)) {
+        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
           await bot.telegram.sendMessage(
             user.tg_id,
             i18nCtx.t('pending_payment_failed', {
