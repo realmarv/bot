@@ -10,5 +10,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
+      - run: npm install @types/node @types/i18n
+      - run: tsc jobs/pending_payments.ts
+      - run: tsc bot/start.ts
       - run: npm ci
       - run: npm test

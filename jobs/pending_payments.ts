@@ -4,7 +4,7 @@ const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
 const logger = require('../logger');
 
-exports.attemptPendingPayments = async bot => {
+exports.attemptPendingPayments = async (bot): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -30,7 +30,7 @@ exports.attemptPendingPayments = async bot => {
       // If one of the payments is on flight we don't do anything
       if (isPending || isPendingOldPayment) return;
 
-      const payment = await payRequest({
+      let payment = await payRequest({
         amount: pending.amount,
         request: pending.payment_request,
       });
@@ -78,7 +78,10 @@ exports.attemptPendingPayments = async bot => {
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
+        if (
+          process.env.PAYMENT_ATTEMPTS !== undefined &&
+          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)
+        ) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
             bot,
@@ -105,7 +108,7 @@ exports.attemptPendingPayments = async bot => {
   }
 };
 
-exports.attemptCommunitiesPendingPayments = async bot => {
+exports.attemptCommunitiesPendingPayments = async (bot): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -159,7 +162,10 @@ exports.attemptCommunitiesPendingPayments = async bot => {
           })
         );
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
+        if (
+          process.env.PAYMENT_ATTEMPTS !== undefined &&
+          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)
+        ) {
           await bot.telegram.sendMessage(
             user.tg_id,
             i18nCtx.t('pending_payment_failed', {

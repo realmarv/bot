@@ -1,3 +1,10 @@
+// import {
+//   type Context,
+//   type HearsContext,
+//   type MiddlewareFn,
+//   resolve,
+// } from "@types/i18n";
+/// <reference types="node" />
 const { Telegraf, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const { limit } = require('@grammyjs/ratelimiter');
@@ -64,42 +71,41 @@ const {
 } = require('../jobs');
 const logger = require('../logger');
 
-const askForConfirmation = async (user, command) => {
+const askForConfirmation = async (user, command: string) => {
   try {
-    const where = {};
-    if (command == '/cancel') {
-      where.$and = [
-        { $or: [{ buyer_id: user._id }, { seller_id: user._id }] },
-        {
-          $or: [
-            { status: 'ACTIVE' },
-            { status: 'PENDING' },
-            { status: 'FIAT_SENT' },
-            { status: 'DISPUTE' },
-          ],
-        },
-      ];
-      const orders = await Order.find(where);
+    const where = {
+      $and: [],
+    };
 
+    if (command === '/cancel') {
+      where.$and.push({
+        $or: [{ buyer_id: user._id }, { seller_id: user._id }],
+      });
+      where.$and.push({
+        $or: [
+          { status: 'ACTIVE' },
+          { status: 'PENDING' },
+          { status: 'FIAT_SENT' },
+          { status: 'DISPUTE' },
+        ],
+      });
+      const orders = await Order.find(where);
       return orders;
-    } else if (command == '/fiatsent') {
-      where.$and = [{ buyer_id: user._id }, { status: 'ACTIVE' }];
+    } else if (command === '/fiatsent') {
+      where.$and.push({ buyer_id: user._id });
+      where.$and.push({ status: 'ACTIVE' });
       const orders = await Order.find(where);
-
       return orders;
-    } else if (command == '/release') {
-      where.$and = [
-        { seller_id: user._id },
-        {
-          $or: [
-            { status: 'ACTIVE' },
-            { status: 'FIAT_SENT' },
-            { status: 'DISPUTE' },
-          ],
-        },
-      ];
+    } else if (command === '/release') {
+      where.$and.push({ seller_id: user._id });
+      where.$and.push({
+        $or: [
+          { status: 'ACTIVE' },
+          { status: 'FIAT_SENT' },
+          { status: 'DISPUTE' },
+        ],
+      });
       const orders = await Order.find(where);
-
       return orders;
     }
 
@@ -130,7 +136,7 @@ const initialize = (botToken, options) => {
   // We schedule pending payments job
   schedule.scheduleJob(
     `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
-    async () => {
+    async (): Promise<void> => {
       await attemptPendingPayments(bot);
     }
   );
@@ -147,7 +153,7 @@ const initialize = (botToken, options) => {
     await calculateEarnings();
   });
 
-  schedule.scheduleJob(`*/5 * * * *`, async () => {
+  schedule.scheduleJob(`*/5 * * * *`, async (): Promise<void> => {
     await attemptCommunitiesPendingPayments(bot);
   });
 
@@ -167,7 +173,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('maintenance', superAdminMiddleware, async ctx => {
+  bot.command('maintenance', superAdminMiddleware, async (ctx): Promise<void> => {
     try {
       const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
       if (!val) return;
