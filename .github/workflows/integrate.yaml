@@ -29,18 +29,7 @@ jobs:
         run: |
           echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
           sudo apt-get update
-          
-          # we have to first install the old version of mongodb and after that install the new version. If we don't do this then we won't be 
-          # able to run `sudo service mongodb start` because we get `mongod: unrecognized service`. This workaround is copied from the following 
-          # issues: https://github.com/microsoft/WSL/issues/796 & https://github.com/microsoft/WSL/issues/796
-          # sudo apt-get install -y mongod
-          
-          # Since we are installing two mongodb version we get the following error:
-          # dpkg: error processing archive /tmp/apt-dpkg-install-6TRhGZ/1-mongodb-database-tools_100.7.1_amd64.deb (--unpack):
-          # trying to overwrite '/usr/bin/bsondump', which is also in package mongo-tools 3.6.3-0ubuntu1
-          # we were able to install the nwe version by overwriting dpkg packages following the instructions in 
-          # https://askubuntu.com/questions/176121/dpkg-error-trying-to-overwrite-file-which-is-also-in
-          sudo apt-get -o Dpkg::Options::="--force-overwrite" install -y mongodb-org
+          sudo apt-get install -y mongodb-org
       - name: Check Mongo version
         run: mongod --version
       - name: Start MongoDB
