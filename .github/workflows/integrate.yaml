@@ -33,7 +33,7 @@ jobs:
           # we have to first install the old version of mongodb and after that install the new version. If we don't do this then we won't be 
           # able to run `sudo service mongodb start` because we get `mongod: unrecognized service`. This workaround is copied from the following 
           # issues: https://github.com/microsoft/WSL/issues/796 & https://github.com/microsoft/WSL/issues/796
-          sudo apt-get install -y mongodb
+          sudo apt-get install -y mongod
           
           # Since we are installing two mongodb version we get the following error:
           # dpkg: error processing archive /tmp/apt-dpkg-install-6TRhGZ/1-mongodb-database-tools_100.7.1_amd64.deb (--unpack):
