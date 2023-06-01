@@ -31,7 +31,7 @@ exports.attemptPendingPayments = async bot => {
       // If one of the payments is on flight we don't do anything
       if (isPending || isPendingOldPayment) return;
 
-      const payment: Promise<any> = await payRequest({
+      let payment: Promise<any> = await payRequest({
         amount: pending.amount,
         request: pending.payment_request,
       });
