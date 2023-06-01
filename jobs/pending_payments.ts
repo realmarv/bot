@@ -3,7 +3,7 @@ const { PendingPayment, Order, User, Community } = require('../models');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
 const logger = require('../logger');
-import { PayViaPaymentRequestResult } from 'lightning/lnd_methods/offchain';
+const { PayViaPaymentRequestResult } = require('lightning/lnd_methods/offchain');
 
 exports.attemptPendingPayments = async bot => {
   const pendingPayments = await PendingPayment.find({
