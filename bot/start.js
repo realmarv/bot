@@ -109,7 +109,7 @@ const askForConfirmation = async (user, command) => {
   }
 };
 
-import main from '../app'
+const main = require('../app')
 main()
 
 const initialize = (botToken, options) => {
