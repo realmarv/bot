@@ -188,7 +188,9 @@ const initialize = (botToken, options) => {
 
   bot.on('text', userMiddleware, async (ctx, next) => {
     try {
+      console.log("here1")
       const config = await Config.findOne({ maintenance: true });
+      console.log("here2")
       if (config) {
         await ctx.reply(ctx.i18n.t('maintenance'));
       } else {
