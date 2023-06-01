@@ -111,7 +111,7 @@ const askForConfirmation = async (user, command) => {
 
 const mongoConnect = require('../db_connect');
 const mongoose = mongoConnect();
-mongoose()
+mongoose.connect()
 
 // const { SocksProxyAgent } = require('socks-proxy-agent');
 // const mongoConnect = require('../db_connect');
