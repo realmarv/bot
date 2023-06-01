@@ -3,6 +3,7 @@ const { PendingPayment, Order, User, Community } = require('../models');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
 const logger = require('../logger');
+const { PayViaPaymentRequestResult } = require('lightning/lnd_methods/offchain');
 
 exports.attemptPendingPayments = async bot => {
   const pendingPayments = await PendingPayment.find({
@@ -30,7 +31,7 @@ exports.attemptPendingPayments = async bot => {
       // If one of the payments is on flight we don't do anything
       if (isPending || isPendingOldPayment) return;
 
-      const payment = await payRequest({
+      const payment: PayViaPaymentRequestResult = await payRequest({
         amount: pending.amount,
         request: pending.payment_request,
       });
