@@ -109,9 +109,6 @@ const askForConfirmation = async (user, command) => {
   }
 };
 
-const app = require('../app');
-app.main();
-
 const initialize = (botToken, options) => {
   const i18n = new I18n({
     defaultLanguageOnMissing: true, // implies allowMissing = true
