@@ -5,6 +5,11 @@ const { getUserI18nContext } = require('../util');
 const logger = require('../logger');
 const { PayViaPaymentRequestResult } = require('lightning/lnd_methods/offchain');
 
+const { Telegraf, session } = require('telegraf');
+const { I18n } = require('@grammyjs/i18n');
+const { limit } = require('@grammyjs/ratelimiter');
+const schedule = require('node-schedule');
+
 exports.attemptPendingPayments = async bot => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
@@ -31,7 +36,7 @@ exports.attemptPendingPayments = async bot => {
       // If one of the payments is on flight we don't do anything
       if (isPending || isPendingOldPayment) return;
 
-      let payment: Promise<any> = await payRequest({
+      let payment = await payRequest({
         amount: pending.amount,
         request: pending.payment_request,
       });
@@ -110,7 +115,7 @@ exports.attemptPendingPayments = async bot => {
   }
 };
 
-exports.attemptCommunitiesPendingPayments = async bot => {
+exports.attemptCommunitiesPendingPayments = async (bot: Telegraf<Context<Update>>) => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
