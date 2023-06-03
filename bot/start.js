@@ -109,8 +109,61 @@ const askForConfirmation = async (user, command) => {
   }
 };
 
-const app = require('../app');
-app.main();
+require('dotenv').config();
+const { SocksProxyAgent } = require('socks-proxy-agent');
+const mongoConnect = require('../db_connect');
+const { resubscribeInvoices } = require('../ln');
+const { delay } = require('../util');
+
+const start = (botToken, options) => {
+  const bot = initialize(botToken, options);
+
+  bot.launch();
+
+  logger.notice('Bot launched.');
+
+  // Enable graceful stop
+  process.once('SIGINT', () => bot.stop('SIGINT'));
+  process.once('SIGTERM', () => bot.stop('SIGTERM'));
+
+  return bot;
+};
+
+const main = () => {
+  (async () => {
+    process.on('unhandledRejection', e => {
+      logger.error(`Unhandled Rejection: ${e.message}`);
+    });
+
+    process.on('uncaughtException', e => {
+      logger.error(`Uncaught Exception: ${e.message}`);
+    });
+
+    const mongoose = mongoConnect();
+    mongoose.connection
+      .once('open', async () => {
+        logger.info('Connected to Mongo instance.');
+        let options = { handlerTimeout: 60000 };
+        if (process.env.SOCKS_PROXY_HOST) {
+          const agent = new SocksProxyAgent(process.env.SOCKS_PROXY_HOST);
+          options = {
+            telegram: {
+              agent,
+            },
+          };
+        }
+        const bot = start(process.env.BOT_TOKEN, options);
+        // Wait 1 seconds before try to resubscribe hold invoices
+        await delay(1000);
+        await resubscribeInvoices(bot);
+      })
+      .on('error', error =>
+        logger.error(`Error connecting to Mongo: ${error}`)
+      );
+  })();
+}
+
+main()
 
 const initialize = (botToken, options) => {
   const i18n = new I18n({
@@ -792,18 +845,4 @@ const initialize = (botToken, options) => {
   return bot;
 };
 
-const start = (botToken, options) => {
-  const bot = initialize(botToken, options);
-
-  bot.launch();
-
-  logger.notice('Bot launched.');
-
-  // Enable graceful stop
-  process.once('SIGINT', () => bot.stop('SIGINT'));
-  process.once('SIGTERM', () => bot.stop('SIGTERM'));
-
-  return bot;
-};
-
-module.exports = { initialize, start };
+module.exports = { initialize, start, main };
