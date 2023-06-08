@@ -3,12 +3,6 @@ const { PendingPayment, Order, User, Community } = require('../models');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
 const logger = require('../logger');
-const { PayViaPaymentRequestResult } = require('lightning/lnd_methods/offchain');
-
-const { Telegraf, session } = require('telegraf');
-const { I18n } = require('@grammyjs/i18n');
-const { limit } = require('@grammyjs/ratelimiter');
-const schedule = require('node-schedule');
 
 exports.attemptPendingPayments = async (bot): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
