@@ -3,7 +3,7 @@ import {
   type HearsContext,
   type MiddlewareFn,
   resolve,
-} from "@types/i18n/deps.ts";
+} from "@types/i18n";
 const { Telegraf, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const { limit } = require('@grammyjs/ratelimiter');
