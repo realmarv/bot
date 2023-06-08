@@ -10,7 +10,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - run: npm install typescript @types/node @types/react
+      - run: npm install typescript @types/node
       - run: tsc jobs/pending_payments.ts
       - run: npm ci
       - run: npm test
