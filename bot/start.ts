@@ -1,9 +1,10 @@
-import {
-  type Context,
-  type HearsContext,
-  type MiddlewareFn,
-  resolve,
-} from "@types/i18n";
+// import {
+//   type Context,
+//   type HearsContext,
+//   type MiddlewareFn,
+//   resolve,
+// } from "@types/i18n";
+/// <reference types="node" />
 const { Telegraf, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const { limit } = require('@grammyjs/ratelimiter');
