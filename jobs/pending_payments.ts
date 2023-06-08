@@ -1,5 +1,3 @@
-import { type } from "../tests/order";
-
 const { payRequest, isPendingPayment } = require('../ln');
 const { PendingPayment, Order, User, Community } = require('../models');
 const messages = require('../bot/messages');

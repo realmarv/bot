@@ -22,5 +22,6 @@ jobs:
           npm --version
       - run: npm install -g typescript
       - run: npm i typescript @types/node @types/react @types/react-dom @types/jest
+      - run: tsc jobs/pending_payments.ts
       - run: npm ci
       - run: npm test
