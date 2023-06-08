@@ -64,9 +64,9 @@ const {
 } = require('../jobs');
 const logger = require('../logger');
 
-const askForConfirmation = async (user: any, command: string) => {
+const askForConfirmation = async (user, command: string) => {
   try {
-    const where: any = {
+    const where = {
       $and: [],
     };
 
