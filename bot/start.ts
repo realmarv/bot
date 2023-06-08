@@ -3,6 +3,10 @@ const { I18n } = require('@grammyjs/i18n');
 const { limit } = require('@grammyjs/ratelimiter');
 const schedule = require('node-schedule');
 const {
+  Order,
+  User,
+  PendingPayment,
+  Community,
   Dispute,
   Config,
 } = require('../models');
@@ -39,6 +43,7 @@ const {
   settleHoldInvoice,
   cancelHoldInvoice,
   payToBuyer,
+  isPendingPayment,
   subscribeInvoice,
 } = require('../ln');
 const {
@@ -48,6 +53,7 @@ const {
   validateInvoice,
   validateLightningAddress,
 } = require('./validations');
+const messages = require('./messages');
 const {
   attemptPendingPayments,
   cancelOrders,
@@ -56,43 +62,28 @@ const {
   attemptCommunitiesPendingPayments,
   deleteCommunity,
 } = require('../jobs');
+const logger = require('../logger');
 
-const askForConfirmation = async (user, command) => {
+const askForConfirmation = async (user: any, command: string) => {
   try {
-    const where = {};
-    if (command == '/cancel') {
-      where.$and = [
-        { $or: [{ buyer_id: user._id }, { seller_id: user._id }] },
-        {
-          $or: [
-            { status: 'ACTIVE' },
-            { status: 'PENDING' },
-            { status: 'FIAT_SENT' },
-            { status: 'DISPUTE' },
-          ],
-        },
-      ];
-      const orders = await Order.find(where);
+    const where: any = {
+      $and: [],
+    };
 
+    if (command === '/cancel') {
+      where.$and.push({ $or: [{ buyer_id: user._id }, { seller_id: user._id }] });
+      where.$and.push({ $or: [{ status: 'ACTIVE' }, { status: 'PENDING' }, { status: 'FIAT_SENT' }, { status: 'DISPUTE' }] });
+      const orders = await Order.find(where);
       return orders;
-    } else if (command == '/fiatsent') {
-      where.$and = [{ buyer_id: user._id }, { status: 'ACTIVE' }];
+    } else if (command === '/fiatsent') {
+      where.$and.push({ buyer_id: user._id });
+      where.$and.push({ status: 'ACTIVE' });
       const orders = await Order.find(where);
-
       return orders;
-    } else if (command == '/release') {
-      where.$and = [
-        { seller_id: user._id },
-        {
-          $or: [
-            { status: 'ACTIVE' },
-            { status: 'FIAT_SENT' },
-            { status: 'DISPUTE' },
-          ],
-        },
-      ];
+    } else if (command === '/release') {
+      where.$and.push({ seller_id: user._id });
+      where.$and.push({ $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }, { status: 'DISPUTE' }] });
       const orders = await Order.find(where);
-
       return orders;
     }
 
