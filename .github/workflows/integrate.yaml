@@ -10,5 +10,17 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
+      - name: Install required dependencies
+        run: |
+          apt update && apt install --yes sudo
+          sudo apt install --yes git
+          sudo DEBIAN_FRONTEND=noninteractive apt install --yes npm
+      - name: Print versions
+        run: |
+          git --version
+          node --version
+          npm --version
+      - run: npm install -g typescript
+      - run: npm i typescript @types/node @types/react @types/react-dom @types/jest
       - run: npm ci
       - run: npm test

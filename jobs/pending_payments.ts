@@ -5,18 +5,14 @@ const { PendingPayment, Order, User, Community } = require('../models');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
 const logger = require('../logger');
+const { PayViaPaymentRequestResult } = require('lightning/lnd_methods/offchain');
 
-// const { Telegraf, session } = require('telegraf');
-// type { Telegraf } = require('telegraf/context')
-// const { Context } = require('telegraf/context')
-// import { Telegraf, Context } = require('telegraf');
-// import { Context } from 'telegraf/context';
-
+const { Telegraf, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const { limit } = require('@grammyjs/ratelimiter');
 const schedule = require('node-schedule');
 
-exports.attemptPendingPayments = async bot => {
+exports.attemptPendingPayments = async (bot): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -93,7 +89,7 @@ exports.attemptPendingPayments = async bot => {
         if (
           process.env.PAYMENT_ATTEMPTS !== undefined &&
           pending.attempts ===
-            parseInt(process.env.PAYMENT_ATTEMPTS?.toString())
+            parseInt(process.env.PAYMENT_ATTEMPTS)
         ) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
@@ -121,7 +117,7 @@ exports.attemptPendingPayments = async bot => {
   }
 };
 
-exports.attemptCommunitiesPendingPayments = async (bot: Telegraf<Context<Update>>) => {
+exports.attemptCommunitiesPendingPayments = async (bot): Promise<void>  => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -177,7 +173,7 @@ exports.attemptCommunitiesPendingPayments = async (bot: Telegraf<Context<Update>
       } else {
         if (
           process.env.PAYMENT_ATTEMPTS !== undefined &&
-          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS.toString())
+          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)
         ) {
           await bot.telegram.sendMessage(
             user.tg_id,
