@@ -80,8 +80,7 @@ exports.attemptPendingPayments = async (bot): Promise<void> => {
       } else {
         if (
           process.env.PAYMENT_ATTEMPTS !== undefined &&
-          pending.attempts ===
-            parseInt(process.env.PAYMENT_ATTEMPTS)
+          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)
         ) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
@@ -109,7 +108,7 @@ exports.attemptPendingPayments = async (bot): Promise<void> => {
   }
 };
 
-exports.attemptCommunitiesPendingPayments = async (bot): Promise<void>  => {
+exports.attemptCommunitiesPendingPayments = async (bot): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },

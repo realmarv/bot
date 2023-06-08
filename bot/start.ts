@@ -71,8 +71,17 @@ const askForConfirmation = async (user: any, command: string) => {
     };
 
     if (command === '/cancel') {
-      where.$and.push({ $or: [{ buyer_id: user._id }, { seller_id: user._id }] });
-      where.$and.push({ $or: [{ status: 'ACTIVE' }, { status: 'PENDING' }, { status: 'FIAT_SENT' }, { status: 'DISPUTE' }] });
+      where.$and.push({
+        $or: [{ buyer_id: user._id }, { seller_id: user._id }],
+      });
+      where.$and.push({
+        $or: [
+          { status: 'ACTIVE' },
+          { status: 'PENDING' },
+          { status: 'FIAT_SENT' },
+          { status: 'DISPUTE' },
+        ],
+      });
       const orders = await Order.find(where);
       return orders;
     } else if (command === '/fiatsent') {
@@ -82,7 +91,13 @@ const askForConfirmation = async (user: any, command: string) => {
       return orders;
     } else if (command === '/release') {
       where.$and.push({ seller_id: user._id });
-      where.$and.push({ $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }, { status: 'DISPUTE' }] });
+      where.$and.push({
+        $or: [
+          { status: 'ACTIVE' },
+          { status: 'FIAT_SENT' },
+          { status: 'DISPUTE' },
+        ],
+      });
       const orders = await Order.find(where);
       return orders;
     }
