@@ -77,7 +77,7 @@ import type {
   LocaleId,
   MaybeArray,
   TranslationVariables,
-} from "./types.ts";
+} from "@types/i18n";
 
 const askForConfirmation = async (user, command: string) => {
   try {
