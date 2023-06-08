@@ -129,7 +129,7 @@ const initialize = (botToken, options) => {
   // We schedule pending payments job
   schedule.scheduleJob(
     `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
-    async () => {
+    async (): Promise<void> => {
       await attemptPendingPayments(bot);
     }
   );
@@ -146,7 +146,7 @@ const initialize = (botToken, options) => {
     await calculateEarnings();
   });
 
-  schedule.scheduleJob(`*/5 * * * *`, async () => {
+  schedule.scheduleJob(`*/5 * * * *`, async (): Promise<void> => {
     await attemptCommunitiesPendingPayments(bot);
   });
 
