@@ -70,6 +70,14 @@ const {
   deleteCommunity,
 } = require('../jobs');
 const logger = require('../logger');
+import type {
+  AddTranslationOptions,
+  FluentBundleOptions,
+  FluentOptions,
+  LocaleId,
+  MaybeArray,
+  TranslationVariables,
+} from "./types.ts";
 
 const askForConfirmation = async (user, command: string) => {
   try {
@@ -173,7 +181,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('maintenance', superAdminMiddleware, async (ctx): Promise<void> => {
+  bot.command('maintenance', superAdminMiddleware, async (ctx: TranslationVariables): Promise<void> => {
     try {
       const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
       if (!val) return;
