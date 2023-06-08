@@ -173,7 +173,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('maintenance', superAdminMiddleware, async (ctx: Context) => {
+  bot.command('maintenance', superAdminMiddleware, async ctx => {
     try {
       const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
       if (!val) return;
