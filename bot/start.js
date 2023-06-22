@@ -109,9 +109,6 @@ const askForConfirmation = async (user, command) => {
   }
 };
 
-const mongoConnect = require('../db_connect');
-mongoConnect();
-
 const initialize = (botToken, options) => {
   const i18n = new I18n({
     defaultLanguageOnMissing: true, // implies allowMissing = true

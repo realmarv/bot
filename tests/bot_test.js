@@ -11,6 +11,9 @@ const testUser = require('./user');
 const testOrder = require('./order');
 const { getCurrenciesWithPrice } = require('../util');
 
+const mongoConnect = require('../db_connect');
+mongoConnect();
+
 describe('Telegram bot test', () => {
   const serverConfig = { port: 9001 };
   const token = '123456';
