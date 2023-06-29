@@ -61,3 +61,4 @@ jobs:
           DB_PORT: '27017'
           DB_NAME: 'lnp2pbot'
         run: npm test
+      - run: npm run dev
