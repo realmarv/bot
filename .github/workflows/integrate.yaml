@@ -59,3 +59,5 @@ jobs:
           DB_PORT: '27017'
           DB_NAME: 'lnp2pbot'
         run: npm test
+      - name: Starting the bot
+        run: npm start
