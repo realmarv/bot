@@ -76,11 +76,11 @@ jobs:
           # Uncomment if running bot behind Tor service
           # SOCKS_PROXY_HOST='socks5h://localhost:9050'
 
-          # DB_USER='mongoadmin'
-          # DB_PASS='secret'
-          # DB_HOST='localhost'
-          # DB_PORT='27017'
-          # DB_NAME='mongodb-mongodb-1'
+          DB_USER: ''
+          DB_PASS: ''
+          DB_HOST: 'localhost'
+          DB_PORT: '27017'
+          DB_NAME: 'lnp2pbot'
 
           # If MONGO_URI have a value DB_* vars will be ignored
           MONGO_URI: ""
